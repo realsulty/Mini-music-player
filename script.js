@@ -1,6 +1,6 @@
 const musicContainer = document.getElementById('music-container');
 const playBtn = document.getElementById('play');
-const prebBtn = document.getElementById('prev');
+const prevBtn = document.getElementById('prev');
 const nextBtn = document.getElementById('next');
 const audio = document.getElementById('audio');
 const progress = document.getElementById('progress');    // ** 1 **
@@ -10,7 +10,7 @@ const cover = document.getElementById('cover');
 
 
 // Song titles 
-const songs = ['hey', 'summer','uklele'];
+const songs = ['hey', 'summer','ukulele'];
 
 // keep track of songs
 let songIndex = 2;      // ** 2
@@ -34,6 +34,51 @@ function playSong() {           /// ** 5 After we Did the event listener and the
 }
 
 
+function pauseSongs() {
+    musicContainer.classList.remove('play'); // This class is very importent to look at since it allowes the whole function to run 
+    playBtn.querySelector('i.fas').classList.add('fa-play'); 
+    playBtn.querySelector('i.fas').classList.remove('fa-pause'); 
+    audio.pause(); 
+}
+
+// Next and Prevouis btns
+
+function prevSong() {
+    songIndex--;
+
+    if (songIndex < 0 ){
+        songIndex = songs.length - 1
+    }
+    loadSongs(songs[songIndex]);
+    playSong();
+}
+
+function nextSong() {
+    songIndex++;
+
+    if (songIndex > songs.length -1 ){
+        songIndex = 0
+    }
+    loadSongs(songs[songIndex]);
+    playSong();
+}
+
+// now setting up the duration bar to control
+function updateProgress(e) {
+    const { duration, currentTime } = e.srcElement; // This refering to the bar
+    const progressPercent = (currentTime / duration) * 100; // This will give u the percent 
+    progress.style.width = `${progressPercent}%`; // Here you are setting the style value for the bar
+
+}
+
+function setProgress(e){
+    const width = this.clientWidth;
+    const clickX = e.offsetX;
+    const duration = audio.duration;
+
+    audio.currentTime = (clickX / width) * duration ;
+}
+
 playBtn.addEventListener('click', ()=> {
     const isPlaying = musicContainer.classList.contains('play');
 
@@ -43,3 +88,9 @@ playBtn.addEventListener('click', ()=> {
         playSong(); // both of these are not defined yet 
     }
 })
+
+
+prevBtn.addEventListener('click',prevSong); // dont call up the function with parentheses 
+nextBtn.addEventListener('click',nextSong);
+audio.addEventListener('timeupdate', updateProgress)
+progressContainer.addEventListener('click', setProgress)
